@@ -1,7 +1,7 @@
 {
-  "name": "example-addon-experiment",
+  "name": "urlbar-nudges-experiment",
   "version": "1.0.0",
-  "description": "An example extension for an add-on experiment.",
+  "description": "Shows nudges or tips in the urlbar view in certain situations.",
   "private": true,
   "license": "MPLv2",
   "webExt": {

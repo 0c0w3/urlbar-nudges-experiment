@@ -1,67 +1,12 @@
-# Example Add-on Experiment
+# Urlbar Nudges Experiment Extension
 
-This is an example Firefox extension for an add-on experiment. It includes a
-background script, a browser chrome mochitest, a small harness for testing
-experiment extensions, and a package.json.
+This is the extension for the urlbar nudges add-on experiment. When installed,
+Firefox will show a "nudge" or "tip" in the urlbar view in certain situations
+that informs the user they can search directly from the urlbar.
 
-See also mythmon's [Normandy NextGen Study Example], another example of the same
-type of extension. This repo, though, includes a test, and instead of building
-one extension zip file per experiment branch, it handles two branches in the
-same extension. It's also slightly geared toward people writing urlbar
-extensions.
+[Bug 1568594] is the meta bug that tracks this experiment.
 
-[Normandy NextGen Study Example]: https://github.com/mozilla/normandy-nextgen-study-example
-
-## How to Use This
-
-If you'd like, clone this repo to start your own experiment extension. At some
-point, you should update the following files for your particular extension's
-metadata:
-
-* src/manifest.json
-  * Update the `"name"`, `"version"`, `"description"`, `"applications.gecko"`,
-    and `"browser_specific_settings.gecko"` entries
-* tests/tests/browser/browser.ini
-  * Update the zip filename in `support-files` (see [Testing] below for more)
-* tests/tests/browser/browser_test.js
-  * Update `ADDON_PATH` (see [Testing] below for more)
-* package.json
-  * Update the `"name"`, `"version"`, and `"description"` entries
-
-If you aren't writing a urlbar extension, then also update these files:
-
-* src/manifest.json
-  * Remove `"urlbar"` from the `"permissions"` entry
-* src/background.js
-  * Remove the `browser.urlbar.engagementTelemetry.set()` line
-* tests/tests/browser/browser_test.js
-  * Remove the jsm module imports and their uses, and the
-    `EVENT_TELEMETRY_PREF` definition and its uses
-
-## Directory Structure
-
-* **src/**
-  * The extension's source files. When you build the extension with [web-ext],
-    everything in this directory and nothing outside it are packaged in the zip.
-* **tests/**
-  * A browser chrome mochitest and head.js for testing the extension.  This
-    directory looks the way it does so that it can be easily copied into your
-    Firefox source tree. See below for more.
-* **.eslintrc.js**
-  * Configures [eslint]. We use the same rules as mozilla-central.
-* **.gitignore**
-  * gitignore config file copied from mozilla-central with a couple of
-    additions.
-* **.prettierrc**
-  * Configures [prettier]. We use the same rules as mozilla-central.
-* **package.json**
-  * An [npm] package.json file. The main things this does are (1) configure
-    web-ext and (2) declare npm dependencies, mostly so that you can run eslint.
-
-[web-ext]: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Getting_started_with_web-ext
-[npm]: https://www.google.com/search?q=npm
-[eslint]: https://www.google.com/search?q=eslint
-[prettier]: https://www.google.com/search?q=prettier+eslint
+[Bug 1568594]: https://bugzilla.mozilla.org/show_bug.cgi?id=1568594
 
 ## Running
 
