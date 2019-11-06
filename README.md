@@ -16,6 +16,7 @@ reason. Both will load the add-on as a temporary add-on, so you'll need to use
 Firefox Nightly, Developer Edition, or any other Firefox build that gives
 privileges to temporarily installed add-ons.
 
+[web-ext]: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Getting_started_with_web-ext
 [about:debugging]: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Debugging
 
 ## Building
