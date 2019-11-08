@@ -17,6 +17,8 @@
   },
   "permissions": [
     "normandyAddonStudy",
+    "search",
+    "tabs",
     "urlbar"
   ],
   "background": {

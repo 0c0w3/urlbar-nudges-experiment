@@ -9,6 +9,15 @@ const BRANCHES = {
   TREATMENT: "treatment",
 };
 
+// The example.com domains are for testing. Consumers of isDefaultEngineHomepage
+// should check that the active hostname is not example.com before displaying
+// a search tip.
+const SUPPORTED_ENGINES = new Map([
+  ["Google", ["www.google.com", "www.google.com/webhp", "example.com/google"]],
+  ["Bing", ["www.bing.com", "example.com/bing"]],
+  ["DuckDuckGo", ["duckduckgo.com", "start.duckduckgo.com", "example.com/ddg"]],
+]);
+
 /**
  * Logs a debug message, which the test harness interprets as a message the
  * add-on is sending to the test.  See head.js for info.
@@ -55,6 +64,42 @@ async function enroll(isTreatmentBranch) {
   sendTestMessage("enrolled");
 }
 
+/**
+ * Checks if the given URL is the homepage of the current default search engine.
+ * Returns false if the default engine is not listed in SUPPORTED_ENGINES.
+ * @param {string} urlStr
+ *   The URL to check, in string form.
+ *
+ * @returns {boolean}
+ */
+async function isDefaultEngineHomepage(urlStr) {
+  let engines = await browser.search.get();
+  let defaultEngine = engines.find(engine => engine.isDefault);
+  if (!defaultEngine) {
+    return false;
+  }
+
+  let homepages = SUPPORTED_ENGINES.get(defaultEngine.name);
+  if (!homepages) {
+    return false;
+  }
+
+  // The URL object throws if the string isn't a valid URL.
+  let url;
+  try {
+    url = new URL(urlStr);
+  } catch(e) {
+    return false;
+  }
+  // Strip protocol, query parameters, and trailing slash.
+  urlStr = url.hostname.concat(url.pathname);
+  if (urlStr.endsWith("/")) {
+    urlStr = urlStr.slice(0, -1);
+  }
+
+  return homepages.includes(urlStr);
+}
+
 (async function main() {
   // As a development convenience, act like we're enrolled in the treatment
   // branch if we're a temporary add-on.  onInstalled with details.temporary =
@@ -87,3 +132,17 @@ async function enroll(isTreatmentBranch) {
     sendTestMessage("ready");
   });
 })();
+
+async function onTabUpdated(tabId, changeInfo, tabInfo) {
+  if (changeInfo.status != "complete") {
+    return;
+  }
+  await isDefaultEngineHomepage(tabInfo.url).then(function(isHomepage) {
+    sendTestMessage("Page is engine homepage: " + isHomepage);
+    if (isHomepage && new URL(tabInfo.url).hostname != "example.com") {
+      // TODO: Display nudge.
+    }
+  });
+}
+
+browser.tabs.onUpdated.addListener(onTabUpdated);
