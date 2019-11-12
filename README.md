@@ -1,8 +1,8 @@
-# Urlbar Nudges Experiment Extension
+# Urlbar Tips Experiment Extension
 
-This is the extension for the urlbar nudges add-on experiment. When installed,
-Firefox will show a "nudge" or "tip" in the urlbar view in certain situations
-that informs the user they can search directly from the urlbar.
+This is the extension for the urlbar tips add-on experiment. When installed,
+Firefox will show a "tip" in the urlbar view in certain situations that informs
+the user they can search directly from the urlbar.
 
 [Bug 1568594] is the meta bug that tracks this experiment.
 

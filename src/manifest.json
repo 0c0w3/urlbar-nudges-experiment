@@ -1,17 +1,17 @@
 {
   "manifest_version": 2,
-  "name": "Urlbar Nudges Experiment",
+  "name": "Urlbar Tips",
   "version": "1.0.0",
-  "description": "Shows nudges or tips in the urlbar view in certain situations.",
+  "description": "Shows tips in the urlbar view in certain situations.",
   "applications": {
     "gecko": {
-      "id": "urlbar-nudges-experiment@shield.mozilla.org",
+      "id": "urlbar-tips@shield.mozilla.org",
       "strict_min_version": "71"
     }
   },
   "browser_specific_settings": {
     "gecko": {
-      "id": "urlbar-nudges-experiment@shield.mozilla.org",
+      "id": "urlbar-tips@shield.mozilla.org",
       "strict_min_version": "71"
     }
   },

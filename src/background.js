@@ -140,7 +140,7 @@ async function onTabUpdated(tabId, changeInfo, tabInfo) {
   await isDefaultEngineHomepage(tabInfo.url).then(function(isHomepage) {
     sendTestMessage("Page is engine homepage: " + isHomepage);
     if (isHomepage && new URL(tabInfo.url).hostname != "example.com") {
-      // TODO: Display nudge.
+      // TODO: Display tip.
     }
   });
 }
