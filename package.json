@@ -1,7 +1,7 @@
 {
-  "name": "urlbar-nudges-experiment",
+  "name": "urlbar-tips",
   "version": "1.0.0",
-  "description": "Shows nudges or tips in the urlbar view in certain situations.",
+  "description": "Shows tips in the urlbar view in certain situations.",
   "private": true,
   "license": "MPLv2",
   "webExt": {
