@@ -18,8 +18,11 @@
   "permissions": [
     "normandyAddonStudy",
     "search",
+    "storage",
     "tabs",
-    "urlbar"
+    "telemetry",
+    "urlbar",
+    "webNavigation"
   ],
   "background": {
     "scripts": [
@@ -27,5 +30,15 @@
     ]
   },
   "incognito": "spanning",
-  "hidden": true
+  "hidden": true,
+  "experiment_apis": {
+    "experiments_urlbar": {
+      "schema": "experiments/urlbar/schema.json",
+      "parent": {
+        "scopes": ["addon_parent"],
+        "paths": [["experiments", "urlbar"]],
+        "script": "experiments/urlbar/api.js"
+      }
+    }
+  }
 }
