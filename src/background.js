@@ -12,9 +12,9 @@ const BRANCHES = {
 
 // The possible tips to show.
 const TIPS = {
-  NONE: 0,
-  ONBOARD: 1,
-  REDIRECT: 2,
+  NONE: "",
+  ONBOARD: "onboard",
+  REDIRECT: "redirect",
 };
 
 // Maps engine names to their homepages.  We show the redirect tip on these.
@@ -126,15 +126,12 @@ async function maybeShowTipForTab(tabID) {
 
   // Determine which tip we should show for the tab.
   let tip;
-  let telemetryKey;
   let isNewtab = ["about:newtab", "about:home"].includes(tab.url);
   let isSearchHomepage = !isNewtab && (await isDefaultEngineHomepage(tab.url));
   if (isNewtab) {
     tip = TIPS.ONBOARD;
-    telemetryKey = "onboard";
   } else if (isSearchHomepage) {
     tip = TIPS.REDIRECT;
-    telemetryKey = "redirect";
   } else {
     // No tip.
     return;
@@ -149,11 +146,7 @@ async function maybeShowTipForTab(tabID) {
   await browser.storage.local.set(storage);
 
   // Update shown-count telemetry.
-  browser.telemetry.keyedScalarAdd(
-    TELEMETRY_SCALARS_SHOWN_COUNT_NAME,
-    telemetryKey,
-    1
-  );
+  browser.telemetry.keyedScalarAdd(TELEMETRY_SCALARS_SHOWN_COUNT_NAME, tip, 1);
 
   if (studyBranch == BRANCHES.TREATMENT) {
     // Start a search.  Our browser.urlbar.onBehaviorRequested and
