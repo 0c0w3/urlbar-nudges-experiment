@@ -252,10 +252,7 @@ async function unenroll() {
   await browser.urlbar.onResultPicked.removeListener(onResultPicked);
   await browser.webNavigation.onBeforeNavigate.removeListener(onBeforeNavigate);
   await browser.windows.onFocusChanged.removeListener(onWindowFocusChanged);
-
-  //XXXadw see XXX below
-  await browser.urlbar.engagementTelemetry.clear({});
-
+  await browser.experiments.urlbar.engagementTelemetry.clear({});
   sendTestMessage("unenrolled");
 }
 
@@ -297,9 +294,7 @@ async function enroll() {
   await browser.windows.onFocusChanged.addListener(onWindowFocusChanged);
 
   // Enable urlbar engagement event telemetry.
-  //XXXadw need marco's api again?  did shane's bugs fix this?  see also
-  // browser.telemetry.setEventRecordingEnabled -- can use?
-  await browser.urlbar.engagementTelemetry.set({ value: true });
+  await browser.experiments.urlbar.engagementTelemetry.set({ value: true });
 
   // Register scalar telemetry.  We increment a keyed scalar when we show a tip.
   browser.telemetry.registerScalars("urlbarTipsExperiment", {
