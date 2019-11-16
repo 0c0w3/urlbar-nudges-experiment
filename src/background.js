@@ -38,7 +38,12 @@ const LAST_UPDATE_THRESHOLD_MS = 24 * 60 * 60 * 1000;
 // Our browser.urlbar provider name.
 const URLBAR_PROVIDER_NAME = "tips";
 
-// storage[STORAGE_KEY_SHOWN_COUNT] is the shown count.
+// Telemetry names.
+const TELEMETRY_SCALARS_NAME = "urlbarTipsExperiment";
+const TELEMETRY_SCALARS_SHOWN_COUNT_NAME = `${TELEMETRY_SCALARS_NAME}.tipShownCount`;
+
+// We store in browser.storage.local the number of times we've shown a tip
+// across all sessions.
 const STORAGE_KEY_SHOWN_COUNT = "tipsShownCount";
 
 // The current study branch.
@@ -50,8 +55,7 @@ let currentTip = TIPS.NONE;
 // Whether we've shown a tip in the current session.
 let showedTipInCurrentSession = false;
 
-// Our copy of browser.storage.local.  We store the number of times we've shown
-// a tip across all sessions.
+// Our copy of browser.storage.local.
 let storage;
 
 /**
@@ -146,7 +150,7 @@ async function maybeShowTipForTab(tabID) {
 
   // Update shown-count telemetry.
   browser.telemetry.keyedScalarAdd(
-    "urlbarTipsExperiment.tipShownCount",
+    TELEMETRY_SCALARS_SHOWN_COUNT_NAME,
     telemetryKey,
     1
   );
@@ -297,7 +301,7 @@ async function enroll() {
   await browser.experiments.urlbar.engagementTelemetry.set({ value: true });
 
   // Register scalar telemetry.  We increment a keyed scalar when we show a tip.
-  browser.telemetry.registerScalars("urlbarTipsExperiment", {
+  browser.telemetry.registerScalars(TELEMETRY_SCALARS_NAME, {
     tipShownCount: {
       kind: "count",
       keyed: true,

@@ -27,11 +27,11 @@ const BRANCHES = {
   TREATMENT: "treatment",
 };
 
-// Should match the same const in background.js.
+// These should match the same consts in background.js.
 const SHOW_TIP_DELAY_MS = 200;
-
-// Should match the same const in background.js.
 const LAST_UPDATE_THRESHOLD_MS = 24 * 60 * 60 * 1000;
+const TELEMETRY_SCALARS_NAME = "urlbarTipsExperiment";
+const TELEMETRY_SCALARS_SHOWN_COUNT_NAME = `${TELEMETRY_SCALARS_NAME}.tipShownCount`;
 
 const TIPS = {
   NONE: 0,
@@ -297,7 +297,7 @@ add_task(async function telemetryTreatmentOnboard() {
 
       TelemetryTestUtils.assertKeyedScalar(
         TelemetryTestUtils.getProcessScalars("dynamic", true),
-        "urlbarTipsExperiment.tipShownCount",
+        TELEMETRY_SCALARS_SHOWN_COUNT_NAME,
         "onboard",
         1
       );
@@ -345,7 +345,7 @@ add_task(async function telemetryTreatmentRedirect() {
 
         TelemetryTestUtils.assertKeyedScalar(
           TelemetryTestUtils.getProcessScalars("dynamic", true),
-          "urlbarTipsExperiment.tipShownCount",
+          TELEMETRY_SCALARS_SHOWN_COUNT_NAME,
           "redirect",
           1
         );
@@ -387,7 +387,7 @@ add_task(async function telemetryControlOnboard() {
       // Shown-count telemetry should still be incremented.
       TelemetryTestUtils.assertKeyedScalar(
         TelemetryTestUtils.getProcessScalars("dynamic", true),
-        "urlbarTipsExperiment.tipShownCount",
+        TELEMETRY_SCALARS_SHOWN_COUNT_NAME,
         "onboard",
         1
       );
@@ -437,7 +437,7 @@ add_task(async function telemetryControlRedirect() {
         // Shown-count telemetry should still be incremented.
         TelemetryTestUtils.assertKeyedScalar(
           TelemetryTestUtils.getProcessScalars("dynamic", true),
-          "urlbarTipsExperiment.tipShownCount",
+          TELEMETRY_SCALARS_SHOWN_COUNT_NAME,
           "redirect",
           1
         );
