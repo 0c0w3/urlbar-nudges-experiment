@@ -206,7 +206,7 @@ async function withAddon(callback) {
     "The add-on should have the expected signed state"
   );
 
-  await callback();
+  await callback(addon);
 
   // If `withStudy` was called and there's an active study, Normandy will
   // automatically end the study when it sees that the add-on has been
