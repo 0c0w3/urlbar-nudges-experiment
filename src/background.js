@@ -242,6 +242,7 @@ function onWindowFocusChanged() {
  * Resets all the state we set on enrollment in the study.
  */
 async function unenroll() {
+  await browser.experiments.urlbar.engagementTelemetry.clear({});
   await browser.tabs.onActivated.removeListener(onTabActivated);
   await browser.webNavigation.onCompleted.removeListener(onWebNavigation);
   await browser.urlbar.onBehaviorRequested.removeListener(onBehaviorRequested);
@@ -249,7 +250,6 @@ async function unenroll() {
   await browser.urlbar.onResultPicked.removeListener(onResultPicked);
   await browser.webNavigation.onBeforeNavigate.removeListener(onBeforeNavigate);
   await browser.windows.onFocusChanged.removeListener(onWindowFocusChanged);
-  await browser.experiments.urlbar.engagementTelemetry.clear({});
   sendTestMessage("unenrolled");
 }
 
