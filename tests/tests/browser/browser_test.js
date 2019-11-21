@@ -14,19 +14,6 @@ XPCOMUtils.defineLazyModuleGetters(this, {
   UrlbarTestUtils: "resource://testing-common/UrlbarTestUtils.jsm",
 });
 
-// The path of the add-on file relative to `getTestFilePath`.
-const ADDON_PATH = "urlbar_tips-1.0.0.zip";
-
-// Use SIGNEDSTATE_MISSING when testing an unsigned, in-development version of
-// the add-on and SIGNEDSTATE_PRIVILEGED when testing the production add-on.
-const EXPECTED_ADDON_SIGNED_STATE = AddonManager.SIGNEDSTATE_MISSING;
-// const EXPECTED_ADDON_SIGNED_STATE = AddonManager.SIGNEDSTATE_PRIVILEGED;
-
-const BRANCHES = {
-  CONTROL: "control",
-  TREATMENT: "treatment",
-};
-
 // These should match the same consts in background.js.
 const SHOW_TIP_DELAY_MS = 200;
 const LAST_UPDATE_THRESHOLD_MS = 24 * 60 * 60 * 1000;
@@ -49,6 +36,19 @@ add_task(async function init() {
   let date = Date.now() - LAST_UPDATE_THRESHOLD_MS - 30000;
   age._times = { created: date, firstUse: date };
   await age.writeTimes();
+
+  // Remove update history and the current active update so tips are shown.
+  let updateRootDir = Services.dirsvc.get("UpdRootD", Ci.nsIFile);
+  let updatesFile = updateRootDir.clone();
+  updatesFile.append("updates.xml");
+  let activeUpdateFile = updateRootDir.clone();
+  activeUpdateFile.append("active-update.xml");
+  try {
+    updatesFile.remove(false);
+  } catch (e) {}
+  try {
+    activeUpdateFile.remove(false);
+  } catch (e) {}
 
   registerCleanupFunction(async () => {
     let age = await ProfileAge();
@@ -337,8 +337,10 @@ add_task(async function telemetryTreatmentRedirect() {
         await checkTip(window, TIPS.REDIRECT, false);
 
         // Click the tip button.
+        let result = await UrlbarTestUtils.getDetailsOfResultAt(window, 0);
+        let button = result.element.row._elements.get("tipButton");
         await UrlbarTestUtils.promisePopupClose(window, () => {
-          EventUtils.synthesizeMouseAtCenter(gURLBar.view.selectedElement, {});
+          EventUtils.synthesizeMouseAtCenter(button, {});
         });
 
         BrowserTestUtils.removeTab(tab);
@@ -552,21 +554,24 @@ async function checkTip(win, expectedTip, closeView = true) {
   Assert.equal(UrlbarTestUtils.getResultCount(win), 1);
   let result = await UrlbarTestUtils.getDetailsOfResultAt(win, 0);
   Assert.equal(result.type, UrlbarUtils.RESULT_TYPE.TIP);
-  Assert.ok(result.heuristic);
-  let name = Services.search.defaultEngine.name;
+  let heuristic;
   let title;
+  let name = Services.search.defaultEngine.name;
   switch (expectedTip) {
     case TIPS.ONBOARD:
+      heuristic = true;
       title =
         `Type less, find more: Search ${name} right from your ` +
         `address bar.`;
       break;
     case TIPS.REDIRECT:
+      heuristic = false;
       title =
         `Start your search here to see suggestions from ${name} ` +
         `and your browsing history.`;
       break;
   }
+  Assert.equal(result.heuristic, heuristic);
   Assert.equal(result.displayed.title, title);
   Assert.equal(
     result.element.row._elements.get("tipButton").textContent,

@@ -180,7 +180,6 @@ async function onResultsRequested(query) {
   let result = {
     type: "tip",
     source: "local",
-    heuristic: true,
     payload: {
       icon: defaultEngine.favIconUrl,
       buttonText: "Okay, Got It",
@@ -189,11 +188,13 @@ async function onResultsRequested(query) {
 
   switch (tip) {
     case TIPS.ONBOARD:
+      result.heuristic = true;
       result.payload.text =
         `Type less, find more: Search ${defaultEngine.name} ` +
         `right from your address bar.`;
       break;
     case TIPS.REDIRECT:
+      result.heuristic = false;
       result.payload.text =
         `Start your search here to see suggestions from ` +
         `${defaultEngine.name} and your browsing history.`;
