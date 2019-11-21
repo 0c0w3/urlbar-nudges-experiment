@@ -11,6 +11,7 @@ XPCOMUtils.defineLazyModuleGetters(this, {
   BrowserWindowTracker: "resource:///modules/BrowserWindowTracker.jsm",
   ProfileAge: "resource://gre/modules/ProfileAge.jsm",
   Services: "resource://gre/modules/Services.jsm",
+  ResetProfile: "resource://gre/modules/ResetProfile.jsm",
 });
 
 XPCOMUtils.defineLazyServiceGetter(
@@ -120,6 +121,38 @@ this.experiments_urlbar = class extends ExtensionAPI {
             // Fall back to the profile age.
             let age = await ProfileAge();
             return (await age.firstUse) || age.created;
+          },
+
+          restartBrowser() {
+            // Notify all windows that an application quit has been requested.
+            let cancelQuit = Cc[
+              "@mozilla.org/supports-PRBool;1"
+            ].createInstance(Ci.nsISupportsPRBool);
+            Services.obs.notifyObservers(
+              cancelQuit,
+              "quit-application-requested",
+              "restart"
+            );
+            // Something aborted the quit process.
+            if (cancelQuit.data) {
+              return;
+            }
+            // If already in safe mode restart in safe mode.
+            if (Services.appinfo.inSafeMode) {
+              Services.startup.restartInSafeMode(Ci.nsIAppStartup.eAttemptQuit);
+            } else {
+              Services.startup.quit(
+                Ci.nsIAppStartup.eAttemptQuit | Ci.nsIAppStartup.eRestart
+              );
+            }
+          },
+
+          resetBrowser() {
+            if (!ResetProfile.resetSupported()) {
+              return;
+            }
+            let window = BrowserWindowTracker.getTopWindow();
+            ResetProfile.openConfirmationDialog(window);
           },
         },
       },
