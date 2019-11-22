@@ -1,15 +1,7 @@
 /* Any copyright is dedicated to the Public Domain.
-* http://creativecommons.org/publicdomain/zero/1.0/ */
+ * http://creativecommons.org/publicdomain/zero/1.0/ */
 
 "use strict";
-
-// The path of the add-on file relative to `getTestFilePath`.
-const ADDON_PATH = "urlbar_tips-1.0.0.zip";
-
-// Use SIGNEDSTATE_MISSING when testing an unsigned, in-development version of
-// the add-on and SIGNEDSTATE_PRIVILEGED when testing the production add-on.
-const EXPECTED_ADDON_SIGNED_STATE = AddonManager.SIGNEDSTATE_MISSING;
-// const EXPECTED_ADDON_SIGNED_STATE = AddonManager.SIGNEDSTATE_PRIVILEGED;
 
 add_task(async function init() {
   let previousDefaultEngine = await Services.search.getDefault();
