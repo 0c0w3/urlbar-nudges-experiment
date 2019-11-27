@@ -6,13 +6,13 @@
   "applications": {
     "gecko": {
       "id": "urlbar-tips@shield.mozilla.org",
-      "strict_min_version": "71"
+      "strict_min_version": "72a1"
     }
   },
   "browser_specific_settings": {
     "gecko": {
       "id": "urlbar-tips@shield.mozilla.org",
-      "strict_min_version": "71"
+      "strict_min_version": "72a1"
     }
   },
   "permissions": [
