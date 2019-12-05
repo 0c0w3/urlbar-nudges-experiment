@@ -339,7 +339,12 @@ async function isDefaultEngineHomepage(urlStr) {
     urlStr = urlStr.slice(0, -1);
   }
 
-  return homepages.includes(urlStr);
+  return (
+    homepages.includes(urlStr) &&
+    // duckduckgo.com is a special case.  The home page and search results page
+    // have the same URL except the search results page has a "q" search param.
+    (urlStr != "duckduckgo.com" || !url.searchParams.has("q"))
+  );
 }
 
 /**

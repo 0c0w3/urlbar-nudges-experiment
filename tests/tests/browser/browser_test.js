@@ -207,6 +207,20 @@ add_task(async function ddgStartNotDefault() {
   });
 });
 
+// The redirect tip should not be shown for duckduckgo.com/?q=foo, the search
+// results page, which happens to have the same domain and path as the home
+// page.
+add_task(async function ddgSearchResultsPage() {
+  await setDefaultEngine("DuckDuckGo");
+  await withStudy({ branch: BRANCHES.TREATMENT }, async () => {
+    await withAddon(async () => {
+      await withDNSRedirect("duckduckgo.com", "/", async url => {
+        await checkTab(window, `${url}?q=test`, TIPS.NONE);
+      });
+    });
+  });
+});
+
 // The redirect tip should not be shown on a non-engine page.
 add_task(async function nonEnginePage() {
   await withStudy({ branch: BRANCHES.TREATMENT }, async () => {
