@@ -244,6 +244,71 @@ add_task(async function oncePerSession() {
   });
 });
 
+// Picking the tip's button should cause the tip not to be shown again in any
+// session.  We can't easily test that, so instead we wait for a message from
+// the extension that says the user engaged.  (We could instead wait for a
+// message when the extension decides not to show the tip, but then the
+// extension would be spamming the console every time it decided not to show a
+// tip.)
+add_task(async function pickButton() {
+  await withStudy({ branch: BRANCHES.TREATMENT }, async () => {
+    await withAddon(async () => {
+      let tab = await BrowserTestUtils.openNewForegroundTab({
+        gBrowser,
+        url: "about:newtab",
+        waitForLoad: false,
+      });
+      await checkTip(window, TIPS.ONBOARD, false);
+
+      // Click the tip button.  The extension should send the engaged message.
+      let result = await UrlbarTestUtils.getDetailsOfResultAt(window, 0);
+      let button = result.element.row._elements.get("tipButton");
+      let messagePromise = awaitAddonMessage("engaged");
+      await UrlbarTestUtils.promisePopupClose(window, () => {
+        EventUtils.synthesizeMouseAtCenter(button, {});
+      });
+
+      await messagePromise;
+      Assert.ok(true, "Saved max shown count");
+
+      BrowserTestUtils.removeTab(tab);
+    });
+  });
+});
+
+// When a tip is shown and the user engages with the urlbar, the tip should not
+// be shown again in any session.  Same caveats as in the pickButton test above.
+add_task(async function engage() {
+  await withStudy({ branch: BRANCHES.TREATMENT }, async () => {
+    await withAddon(async () => {
+      let tab = await BrowserTestUtils.openNewForegroundTab({
+        gBrowser,
+        url: "about:newtab",
+        waitForLoad: false,
+      });
+      await checkTip(window, TIPS.ONBOARD, false);
+
+      // Do a search and press enter.  The extension should send the engaged
+      // message.
+      await UrlbarTestUtils.promiseAutocompleteResultPopup({
+        window,
+        value: "example.com",
+        waitForFocus,
+        fireInputEvent: true,
+      });
+      let messagePromise = awaitAddonMessage("engaged");
+      await UrlbarTestUtils.promisePopupClose(window, () => {
+        EventUtils.synthesizeKey("KEY_Enter");
+      });
+
+      await messagePromise;
+      Assert.ok(true, "Saved max shown count");
+
+      BrowserTestUtils.removeTab(tab);
+    });
+  });
+});
+
 // The tip shouldn't be shown when there's another notification present.
 add_task(async function notification() {
   await withStudy({ branch: BRANCHES.TREATMENT }, async () => {
