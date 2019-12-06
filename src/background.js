@@ -52,6 +52,9 @@ let studyBranch;
 // The tip we should currently show.
 let currentTip = TIPS.NONE;
 
+// Whether we've shown a tip in the current engagement.
+let showedTipInCurrentEngagement = false;
+
 // Whether we've shown a tip in the current session.
 let showedTipInCurrentSession = false;
 
@@ -174,6 +177,8 @@ async function onResultsRequested(query) {
   let tip = currentTip;
   currentTip = TIPS.NONE;
 
+  showedTipInCurrentEngagement = true;
+
   let engines = await browser.search.get();
   let defaultEngine = engines.find(engine => engine.isDefault);
 
@@ -209,11 +214,24 @@ async function onResultsRequested(query) {
  */
 async function onResultPicked(payload) {
   browser.urlbar.focus();
+  // onEngagement will be called too.
+}
 
-  // The user clicked the "Okay, Got It" button.  We shouldn't show a tip again
-  // in any session.  Set the shown count to the max.
-  storage[STORAGE_KEY_SHOWN_COUNT] = MAX_SHOWN_COUNT;
-  await browser.storage.local.set(storage);
+/**
+ * browser.urlbar.onEngagement listener.  Called when an engagement starts and
+ * stops.
+ */
+async function onEngagement(state) {
+  if (showedTipInCurrentEngagement && state == "engagement") {
+    // The user either clicked the tip's "Okay, Got It" button, or they made an
+    // engagement with the urlbar while the tip was showing.  We treat both as
+    // the user's acknowledgment of the tip, and we don't show tips again in any
+    // session.  Set the shown count to the max.
+    storage[STORAGE_KEY_SHOWN_COUNT] = MAX_SHOWN_COUNT;
+    await browser.storage.local.set(storage);
+    sendTestMessage("engaged");
+  }
+  showedTipInCurrentEngagement = false;
 }
 
 /**
@@ -249,6 +267,7 @@ async function unenroll() {
   await browser.urlbar.onBehaviorRequested.removeListener(onBehaviorRequested);
   await browser.urlbar.onResultsRequested.removeListener(onResultsRequested);
   await browser.urlbar.onResultPicked.removeListener(onResultPicked);
+  await browser.urlbar.onEngagement.removeListener(onEngagement);
   await browser.webNavigation.onBeforeNavigate.removeListener(onBeforeNavigate);
   await browser.windows.onFocusChanged.removeListener(onWindowFocusChanged);
   sendTestMessage("unenrolled");
@@ -279,6 +298,10 @@ async function enroll() {
   );
   await browser.urlbar.onResultPicked.addListener(
     onResultPicked,
+    URLBAR_PROVIDER_NAME
+  );
+  await browser.urlbar.onEngagement.addListener(
+    onEngagement,
     URLBAR_PROVIDER_NAME
   );
 
