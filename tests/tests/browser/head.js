@@ -17,7 +17,7 @@ XPCOMUtils.defineLazyModuleGetters(this, {
 });
 
 // The path of the add-on file relative to `getTestFilePath`.
-const ADDON_PATH = "urlbar_tips-1.0a2.zip";
+const ADDON_PATH = "urlbar_tips-1.0a3.zip";
 
 // Use SIGNEDSTATE_MISSING when testing an unsigned, in-development version of
 // the add-on and SIGNEDSTATE_PRIVILEGED when testing the production add-on.
