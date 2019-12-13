@@ -17,11 +17,128 @@ const TIPS = {
   REDIRECT: "redirect",
 };
 
-// Maps engine names to their homepages.  We show the redirect tip on these.
+// This map maps engine names to their homepages.  We show the redirect tip on
+// these pages.  It's important to take into account the international versions
+// of domains because we don't want to exclude anyone.  Google has a number of
+// them.  Bing and DDG do too, but they redirect to the .com in both cases.
+// This experiment doesn't target any countries in particular, but it does
+// target all of the Firefox English locales: en-US, en-CA, en-GB, en-ZA.
+// Therefore we include most of the Google domains for countries where English
+// is spoken.  Keep in mind that if someone in one of these countries is using a
+// non-English-locale Firefox, they won't be enrolled in the experiment.  This
+// list is taken from
+// https://ipfs.io/ipfs/QmXoypizjW3WknFiJnKLwHCnL72vedxjQkDDP1mXWo6uco/wiki/List_of_Google_domains.html.
+// It's probably not exhaustive, but it's pretty long.
 const SUPPORTED_ENGINES = new Map([
-  ["Google", ["www.google.com", "www.google.com/webhp"]],
   ["Bing", ["www.bing.com"]],
   ["DuckDuckGo", ["duckduckgo.com", "start.duckduckgo.com"]],
+  [
+    "Google",
+    [
+      // Ascension Island
+      "www.google.ac",
+      "www.google.ac/webhp",
+      // American Samoa
+      "www.google.as",
+      "www.google.as/webhp",
+      // Anguilla
+      "www.google.com.ai",
+      "www.google.com.ai/webhp",
+      // Australia
+      "www.google.com.au",
+      "www.google.com.au/webhp",
+      // Bahamas
+      "www.google.bs",
+      "www.google.bs/webhp",
+      // British Virgin Islands
+      "www.google.vg",
+      "www.google.vg/webhp",
+      // Canada
+      "www.google.ca",
+      "www.google.ca/webhp",
+      // Cook Islands
+      "www.google.co.ck",
+      "www.google.co.ck/webhp",
+      // Federated States of Micronesia
+      "www.google.fm",
+      "www.google.fm/webhp",
+      // Fiji
+      "www.google.com.fj",
+      "www.google.com.fj/webhp",
+      // Jamaica
+      "www.google.com.jm",
+      "www.google.com.jm/webhp",
+      // Jersey
+      "www.google.je",
+      "www.google.je/webhp",
+      // Kiribati
+      "www.google.ki",
+      "www.google.ki/webhp",
+      // Ireland
+      "www.google.ie",
+      "www.google.ie/webhp",
+      // Isle of Man
+      "www.google.im",
+      "www.google.im/webhp",
+      // New Zealand
+      "www.google.co.nz",
+      "www.google.co.nz/webhp",
+      // Puerto Rico
+      "www.google.com.pr",
+      "www.google.com.pr/webhp",
+      // Montserrat
+      "www.google.ms",
+      "www.google.ms/webhp",
+      // Norfolk Island
+      "www.google.com.nf",
+      "www.google.com.nf/webhp",
+      // Papua New Guinea
+      "www.google.com.pg",
+      "www.google.com.pg/webhp",
+      // Philippines
+      "www.google.com.ph",
+      "www.google.com.ph/webhp",
+      // Pitcairn Islands
+      "www.google.pn",
+      "www.google.pn/webhp",
+      // Singapore
+      "www.google.com.sg",
+      "www.google.com.sg/webhp",
+      // Saint Helena, Ascension and Tristan da Cunha
+      "www.google.sh",
+      "www.google.sh/webhp",
+      // Saint Vincent and the Grenadines
+      "www.google.com.vc",
+      "www.google.com.vc/webhp",
+      // Samoa
+      "www.google.ws",
+      "www.google.ws/webhp",
+      // Sierra Leone
+      "www.google.com.sl",
+      "www.google.com.sl/webhp",
+      // Solomon Islands
+      "www.google.com.sb",
+      "www.google.com.sb/webhp",
+      // South Africa
+      "www.google.co.za",
+      "www.google.co.za/webhp",
+      // Tonga
+      "www.google.to",
+      "www.google.to/webhp",
+      // Trinidad and Tobago
+      "www.google.tt",
+      "www.google.tt/webhp",
+      // United Kingdom
+      "www.google.co.uk",
+      "www.google.co.uk/webhp",
+      // United States
+      "www.google.com",
+      "www.google.com/webhp",
+      // United States Virgin Islands
+      "www.google.co.vi",
+      "www.google.co.vi/webhp",
+    ],
+  ],
 ]);
 
 // The maximum number of times we'll show a tip across all sessions.

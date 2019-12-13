@@ -26,6 +26,15 @@ const TIPS = {
   REDIRECT: 2,
 };
 
+// We test some of the bigger Google domains.
+const GOOGLE_DOMAINS = [
+  "www.google.com",
+  "www.google.ca",
+  "www.google.co.uk",
+  "www.google.com.au",
+  "www.google.co.nz",
+];
+
 add_task(async function init() {
   await PlacesUtils.history.clear();
   await PlacesUtils.bookmarks.eraseEverything();
@@ -81,52 +90,60 @@ add_task(async function home() {
 // engine.
 add_task(async function google() {
   await setDefaultEngine("Google");
-  await withStudy({ branch: BRANCHES.TREATMENT }, async () => {
-    await withAddon(async () => {
-      await withDNSRedirect("www.google.com", "/", async url => {
-        await checkTab(window, url, TIPS.REDIRECT);
+  for (let domain of GOOGLE_DOMAINS) {
+    await withStudy({ branch: BRANCHES.TREATMENT }, async () => {
+      await withAddon(async () => {
+        await withDNSRedirect(domain, "/", async url => {
+          await checkTab(window, url, TIPS.REDIRECT);
+        });
       });
     });
-  });
+  }
 });
 
 // The redirect tip should be shown for www.google.com/webhp when it's the
 // default engine.
 add_task(async function googleWebhp() {
   await setDefaultEngine("Google");
-  await withStudy({ branch: BRANCHES.TREATMENT }, async () => {
-    await withAddon(async () => {
-      await withDNSRedirect("www.google.com", "/webhp", async url => {
-        await checkTab(window, url, TIPS.REDIRECT);
+  for (let domain of GOOGLE_DOMAINS) {
+    await withStudy({ branch: BRANCHES.TREATMENT }, async () => {
+      await withAddon(async () => {
+        await withDNSRedirect(domain, "/webhp", async url => {
+          await checkTab(window, url, TIPS.REDIRECT);
+        });
       });
     });
-  });
+  }
 });
 
 // The redirect tip should not be shown for www.google.com when it's not the
 // default engine.
 add_task(async function googleNotDefault() {
   await setDefaultEngine("Bing");
-  await withStudy({ branch: BRANCHES.TREATMENT }, async () => {
-    await withAddon(async () => {
-      await withDNSRedirect("www.google.com", "/", async url => {
-        await checkTab(window, url, TIPS.NONE);
+  for (let domain of GOOGLE_DOMAINS) {
+    await withStudy({ branch: BRANCHES.TREATMENT }, async () => {
+      await withAddon(async () => {
+        await withDNSRedirect(domain, "/", async url => {
+          await checkTab(window, url, TIPS.NONE);
+        });
       });
     });
-  });
+  }
 });
 
 // The redirect tip should not be shown for www.google.com/webhp when it's not
 // the default engine.
 add_task(async function googleWebhpNotDefault() {
   await setDefaultEngine("Bing");
-  await withStudy({ branch: BRANCHES.TREATMENT }, async () => {
-    await withAddon(async () => {
-      await withDNSRedirect("www.google.com", "/webhp", async url => {
-        await checkTab(window, url, TIPS.NONE);
+  for (let domain of GOOGLE_DOMAINS) {
+    await withStudy({ branch: BRANCHES.TREATMENT }, async () => {
+      await withAddon(async () => {
+        await withDNSRedirect(domain, "/webhp", async url => {
+          await checkTab(window, url, TIPS.NONE);
+        });
       });
     });
-  });
+  }
 });
 
 // The redirect tip should be shown for www.bing.com when it's the default
