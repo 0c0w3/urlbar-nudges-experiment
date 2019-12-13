@@ -17,9 +17,9 @@ const TIPS = {
   REDIRECT: "redirect",
 };
 
-// This map maps engine names to their homepages.  We show the redirect tip on
-// these pages.  It's important to take into account the international versions
-// of domains because we don't want to exclude anyone.  Google has a number of
+// This maps engine names to their homepages.  We show the redirect tip on these
+// pages.  It's important to take into account the international versions of
+// domains because we don't want to exclude anyone.  Google has a number of
 // them.  Bing and DDG do too, but they redirect to the .com in both cases.
 // This experiment doesn't target any countries in particular, but it does
 // target all of the Firefox English locales: en-US, en-CA, en-GB, en-ZA.
