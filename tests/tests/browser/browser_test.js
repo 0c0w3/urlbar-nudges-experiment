@@ -267,7 +267,7 @@ add_task(async function oncePerSession() {
 // message when the extension decides not to show the tip, but then the
 // extension would be spamming the console every time it decided not to show a
 // tip.)
-add_task(async function pickButton() {
+add_task(async function pickButton_onboard() {
   await withStudy({ branch: BRANCHES.TREATMENT }, async () => {
     await withAddon(async () => {
       let tab = await BrowserTestUtils.openNewForegroundTab({
@@ -288,7 +288,46 @@ add_task(async function pickButton() {
       await messagePromise;
       Assert.ok(true, "Saved max shown count");
 
+      // The input should be empty and the pageproxystate invalid.  Wait a bit
+      // to make sure nothing appears in the input.
+      // eslint-disable-next-line mozilla/no-arbitrary-setTimeout
+      await new Promise(r => setTimeout(r, 500));
+      Assert.equal(gURLBar.value, "", "Input is empty");
+      Assert.equal(gURLBar.getAttribute("pageproxystate"), "invalid");
+
       BrowserTestUtils.removeTab(tab);
+    });
+  });
+});
+
+// Same as the previous task, but tests the redirect tip.
+add_task(async function pickButton_redirect() {
+  await setDefaultEngine("Google");
+  await withStudy({ branch: BRANCHES.TREATMENT }, async () => {
+    await withAddon(async () => {
+      await withDNSRedirect("www.google.com", "/", async url => {
+        await BrowserTestUtils.withNewTab(url, async () => {
+          await checkTip(window, TIPS.REDIRECT, false);
+
+          // Click the tip button.  The extension should send the engaged
+          // message.
+          let result = await UrlbarTestUtils.getDetailsOfResultAt(window, 0);
+          let button = result.element.row._elements.get("tipButton");
+          let messagePromise = awaitAddonMessage("engaged");
+          await UrlbarTestUtils.promisePopupClose(window, () => {
+            EventUtils.synthesizeMouseAtCenter(button, {});
+          });
+          await messagePromise;
+          Assert.ok(true, "Saved max shown count");
+
+          // The input should be empty and the pageproxystate invalid.  Wait a
+          // bit to make sure nothing appears in the input.
+          // eslint-disable-next-line mozilla/no-arbitrary-setTimeout
+          await new Promise(r => setTimeout(r, 500));
+          Assert.equal(gURLBar.value, "", "Input is empty");
+          Assert.equal(gURLBar.getAttribute("pageproxystate"), "invalid");
+        });
+      });
     });
   });
 });

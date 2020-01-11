@@ -1,6 +1,6 @@
 {
   "name": "urlbar-tips",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Shows tips in the urlbar view in certain situations.",
   "private": true,
   "license": "MPLv2",
