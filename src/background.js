@@ -331,6 +331,13 @@ async function onResultsRequested(query) {
  */
 async function onResultPicked(payload) {
   browser.urlbar.focus();
+
+  // UrlbarInput calls handleRevert when the tip is picked, which puts the
+  // current page's URL back into the input.  We want the input to be empty and
+  // showing the magnifying class icon (pageproxystate=invalid), so call
+  // clearInput now.
+  browser.experiments.urlbar.clearInput();
+
   // onEngagement will be called too.
 }
 
